@@ -20,8 +20,154 @@ session_start();
     <script src="DataTables/datatables.min.js"></script>
     <script src="Font-Awesome-master/js/all.min.js"></script>
     <script src="js/script.js"></script>
+
+    <style>
+        html,body{
+            height:100%;
+            width:100%;
+        }
+        main{
+            height:100%;
+            display:flex;
+            flex-flow:column;
+        }
+        #page-container{
+            flex: 1 1 auto; 
+            overflow:auto;
+        }
+        #topNavBar{
+            flex: 0 1 auto; 
+        }
+        .thumbnail-img{
+            width:50px;
+            height:50px;
+            margin:2px
+        }
+        .truncate-1 {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+        }
+        .truncate-3 {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+        }
+        .modal-dialog.large {
+            width: 80% !important;
+            max-width: unset;
+        }
+        .modal-dialog.mid-large {
+            width: 50% !important;
+            max-width: unset;
+        }
+        @media (max-width:720px){
+            
+            .modal-dialog.large {
+                width: 100% !important;
+                max-width: unset;
+            }
+            .modal-dialog.mid-large {
+                width: 100% !important;
+                max-width: unset;
+            }  
+        
+        }
+        .display-select-image{
+            width:60px;
+            height:60px;
+            margin:2px
+        }
+        img.display-image {
+            width: 100%;
+            height: 45vh;
+            object-fit: cover;
+            background: black;
+        }
+        /* width */
+        ::-webkit-scrollbar {
+        width: 5px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+        background: #f1f1f1; 
+        }
+        
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+        background: #888; 
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+        background: #555; 
+        }
+        .img-del-btn{
+            right: 2px;
+            top: -3px;
+        }
+        .img-del-btn>.btn{
+            font-size: 10px;
+            padding: 0px 2px !important;
+        }
+    </style>
+    
 </head>
 <body>
-    
+<main>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary bg-gradient" id="topNavBar">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+            Simple Online Groceries Ordering System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $page == "products" ? "active" :"" ?>" href="./?page=products">Products</a>
+                    </li>
+                    <?php if(isset($_SESSION['customer_id']) && $_SESSION['customer_id'] > 0): ?>
+
+                    <li class="nav-item">
+                        <?php 
+                         $count = $conn->query("SELECT SUM(quantity) as total FROM `cart_list` where `customer_id` = '{$_SESSION['customer_id']}'")->fetchArray()['total'];
+                        ?>
+                        <a class="nav-link <?php echo $page == "cart" ? "active" :"" ?>" href="./?page=cart">Cart <span id="cart_count" class="badge badge-pill bg-light text-dark"><?php echo $count > 0 ? $count : 0 ?></span></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?php echo $page == "orders" ? "active" :"" ?>" href="./?page=orders">My Orders</a>
+                    </li>
+                    <?php endif; ?>
+                    
+                </ul>
+            </div>
+            <div>
+            <?php if(isset($_SESSION['customer_id']) && $_SESSION['customer_id'] > 0): ?>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle bg-transparent  text-light border-0" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Hello <?php echo $_SESSION['fullname'] ?>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    <li><a class="dropdown-item" href="./?page=manage_account">Manage Account</a></li>
+                    <li><a class="dropdown-item" href="Actions.php?a=customer_logout">Logout</a></li>
+                </ul>
+            </div>
+            <?php else: ?>
+                <a href="javascript:void(0)" id="login-btn" class="text-decoration-none">Login</a>
+                |
+                <a href="javascript:void(0)" id="register-btn" class="text-decoration-none">Register</a>
+            <?php endif; ?>
+
+            </div>
+        </div>
+    </nav>
+</main>
 </body>
 </html>
